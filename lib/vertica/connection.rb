@@ -99,6 +99,7 @@ class Vertica::Connection
     conn.write Vertica::Messages::CancelRequest.new(backend_pid, backend_key)
     conn.write Vertica::Messages::Flush.new
     conn.socket.close
+    @ready_for_query = true
   end
 
   def interrupt
@@ -123,6 +124,7 @@ class Vertica::Connection
       puts "<= #{message.inspect}" if @debug
       return message
     else
+      cancel
       raise Errno::ETIMEDOUT
     end
   end
